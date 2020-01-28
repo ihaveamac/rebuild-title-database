@@ -7,9 +7,10 @@ This had minimal testing, but it probably works in most cases. File an issue, se
 
 ## Summary
 1. [Get boot9 and movable.sed.](https://ihaveamac.github.io/dump.html)
-2. Run the script with the SD card. Example:  
+2. Install the requirements: `<py3-cmd> -m pip install --user -r requirements.txt`
+3. Run the script with the SD card. Example:  
 `<py3-cmd> rebuild-title-database.py -b boot9.bin -m movable.sed -s F: -o out`
-3. Import into title.db with save3ds_fuse and the -i flag.
+4. Import into title.db with save3ds_fuse and the -i flag.
 
 `<py3-cmd>` is often `python3` for *nix and Python from the Microsoft Store, and `py -3` for Windows when installed from python.org.
 
