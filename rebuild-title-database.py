@@ -7,14 +7,12 @@
 # You can find the full license text in LICENSE.md in the root of this project.
 
 from argparse import ArgumentParser
-import lzma
 from pathlib import Path
 from random import randint
 import sys
 
 from pyctr.crypto import CryptoEngine, Keyslot
 from pyctr.type.ncch import NCCHReader, NCCHSection
-from pyctr.type.cia import CIAReader
 from pyctr.type.tmd import TitleMetadataReader
 from pyctr.util import roundup
 
@@ -47,7 +45,6 @@ if len(id1_list) > 1:
 elif len(id1_list) < 1:
     print('No id1 directory could be found in', id0, file=sys.stderr)
     sys.exit(2)
-
 
 id1 = id1_list[0]
 

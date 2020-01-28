@@ -14,10 +14,8 @@ This had minimal testing, but it probably works in most cases. File an issue, se
 
 `<py3-cmd>` is often `python3` for *nix and Python from the Microsoft Store, and `py -3` for Windows when installed from python.org.
 
-## `title.db.gz`
-This is a gzip'd empty `title.db` file. This can be added manually with a tool like ninfs, or encrypting it in a script with pyctr. Eventually this tool might put it in place automatically.
-
-Decompress with `gzip -d title.db.gz` or `<py3-cmd> -m gzip -d title.db.gz`.
+## fix-titledb.py
+This fixes the CMAC of `title.db` on the SD card. With `--copy-clean` it will copy an empty one from `title.db.gz` and fix the CMAC.
 
 ## License
-`rebuild-title-database.py` is under the MIT license.
+`rebuild-title-database.py` and `fix-titledb.py` are under the MIT license.
