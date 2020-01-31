@@ -48,8 +48,9 @@ elif len(id1_list) < 1:
     sys.exit(2)
 
 id1 = id1_list[0]
+title_dir = id1 / 'title'
 
-for tmd_path in id1.rglob('*.tmd'):
+for tmd_path in title_dir.rglob('*.tmd'):
     tmd_id = int(tmd_path.name[0:8], 16)
     tmd_path_for_cid = '/' + '/'.join(tmd_path.parts[len(id1.parts):])
 
