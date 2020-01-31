@@ -6,6 +6,7 @@
 # This file is licensed under The MIT License (MIT).
 # You can find the full license text in LICENSE.md in the root of this project.
 
+import traceback
 from argparse import ArgumentParser
 from pathlib import Path
 from random import randint
@@ -54,7 +55,11 @@ for tmd_path in id1.rglob('*.tmd'):
 
     with tmd_path.open('rb') as tmd_fh:
         with crypto.create_ctr_io(Keyslot.SD, tmd_fh, crypto.sd_path_to_iv(tmd_path_for_cid)) as tmd_cfh:
-            tmd = TitleMetadataReader.load(tmd_cfh)
+            try:
+                tmd = TitleMetadataReader.load(tmd_cfh)
+            except Exception as e:
+                print(f'Failed to parse tmd at {tmd_path}')
+                traceback.print_exc()
 
     print('Parsing', tmd.title_id)
 
