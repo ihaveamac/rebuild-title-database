@@ -14,11 +14,10 @@ import sys
 
 from pyctr.crypto import CryptoEngine, Keyslot
 
-parser = ArgumentParser(description='Fix the cmac of title.db. Can also copy a clean one.')
+parser = ArgumentParser(description='Copy a clean version of title.db and import.db.')
 parser.add_argument('-b', '--boot9', help='boot9')
 parser.add_argument('-m', '--movable', help='movable.sed', required=True)
 parser.add_argument('-s', '--sd', help='SD card (containing "Nintendo 3DS")')
-parser.add_argument('--copy-clean', help='Copy the clean title.db before fixing cmac.', action='store_true')
 
 args = parser.parse_args()
 
@@ -40,23 +39,29 @@ elif len(id1_list) < 1:
 
 id1 = id1_list[0]
 
-title_db_path = id1 / 'dbs' / 'title.db'
+dbs_folder = id1 / 'dbs'
+dbs_folder.mkdir(exist_ok=True)
 
-with title_db_path.open('rb+') as fh:
+title_db_path = dbs_folder / 'title.db'
+import_db_path = dbs_folder / 'import.db'
+
+with gzip.open('title.db.gz') as gzfh:
+    db_data = gzfh.read()
+
+with title_db_path.open('wb') as fh:
     with crypto.create_ctr_io(Keyslot.SD, fh, CryptoEngine.sd_path_to_iv('/dbs/title.db')) as cfh:
-        if args.copy_clean:
-            print('Opening clean title.db...')
-            with gzip.open('title.db.gz') as gzfh:
-                title_db_data = gzfh.read()
-        else:
-            print('Reading existing title.db...')
-            title_db_data = cfh.read()
-            cfh.seek(0)
-
         cmac = crypto.create_cmac_object(Keyslot.CMACSDNAND)
-        cmac_data = [b'CTR-9DB0', 0x2.to_bytes(4, 'little'), title_db_data[0x100:0x200]]
+        cmac_data = [b'CTR-9DB0', 0x2.to_bytes(4, 'little'), db_data[0x100:0x200]]
         cmac.update(sha256(b''.join(cmac_data)).digest())
-        title_db_data = cmac.digest() + title_db_data[0x10:]
 
-        cfh.truncate()
-        cfh.write(title_db_data)
+        cfh.write(cmac.digest())
+        cfh.write(db_data[0x10:])
+
+with import_db_path.open('wb') as fh:
+    with crypto.create_ctr_io(Keyslot.SD, fh, CryptoEngine.sd_path_to_iv('/dbs/import.db')) as cfh:
+        cmac = crypto.create_cmac_object(Keyslot.CMACSDNAND)
+        cmac_data = [b'CTR-9DB0', 0x3.to_bytes(4, 'little'), db_data[0x100:0x200]]
+        cmac.update(sha256(b''.join(cmac_data)).digest())
+
+        cfh.write(cmac.digest())
+        cfh.write(db_data[0x10:])

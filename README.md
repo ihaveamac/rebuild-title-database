@@ -15,7 +15,7 @@ This had minimal testing, but it probably works in most cases. File an issue, se
 `<py3-cmd>` is often `python3` for *nix and Python from the Microsoft Store, and `py -3` for Windows when installed from python.org.
 
 ## fix-titledb.py
-This fixes the CMAC of `title.db` on the SD card. With `--copy-clean` it will copy an empty one from `title.db.gz` and fix the CMAC.
+This copies a clean version of `title.db` and `import.db` from `title.db.gz`.
 
 ## License
 `rebuild-title-database.py` and `fix-titledb.py` are under the MIT license.
