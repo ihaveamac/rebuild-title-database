@@ -73,21 +73,25 @@ for tmd_path in title_dir.rglob('*.tmd'):
         has_manual = any(x for x in tmd.chunk_records if x.cindex == 1)
     content0_path_for_cid = '/' + '/'.join(content0_path.parts[len(id1.parts):])
 
-    with content0_path.open('rb') as ncch_fh:
-        with crypto.create_ctr_io(Keyslot.SD, ncch_fh, crypto.sd_path_to_iv(content0_path_for_cid)) as ncch_cfh:
-            ncch = NCCHReader(ncch_cfh, load_sections=False)
-            ncch_product_code = ncch.product_code
-            # NCCH version is required for DLP child to work I think. I remember something didn't work if it wasn't
-            #   set in the title info entry.
-            ncch_version = ncch.version
+    try:
+        with content0_path.open('rb') as ncch_fh:
+            with crypto.create_ctr_io(Keyslot.SD, ncch_fh, crypto.sd_path_to_iv(content0_path_for_cid)) as ncch_cfh:
+                ncch = NCCHReader(ncch_cfh, load_sections=False)
+                ncch_product_code = ncch.product_code
+                # NCCH version is required for DLP child to work I think. I remember something didn't work if it wasn't
+                #   set in the title info entry.
+                ncch_version = ncch.version
 
-            try:
-                with ncch.open_raw_section(NCCHSection.ExtendedHeader) as e:
-                    e.seek(0x200 + 0x30)
-                    extdata_id = e.read(8)
-            except KeyError:
-                # not an executable title
-                extdata_id = b'\0' * 8
+                try:
+                    with ncch.open_raw_section(NCCHSection.ExtendedHeader) as e:
+                        e.seek(0x200 + 0x30)
+                        extdata_id = e.read(8)
+                except KeyError:
+                    # not an executable title
+                    extdata_id = b'\0' * 8
+    except FileNotFoundError:
+        print(f'Could not find the main content for {tmd.title_id}: {content0_path}')
+        continue
 
     tidlow_path = tmd_path.parents[1]
 
