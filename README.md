@@ -1,7 +1,7 @@
 # rebuild-title-database
 Rebuilds the contents of `title.db` for Nintendo 3DS.
 
-This currently does not interact with `title.db` directly, [https://github.com/wwylele/save3ds](save3ds_fuse) must be used manually to extract and rebuild.
+This currently does not interact with `title.db` directly, [save3ds_fuse](https://github.com/wwylele/save3ds) must be used manually to extract and rebuild.
 
 This had minimal testing, but it probably works in most cases. File an issue, send me an email, or contact me on Discord if there are problems.
 
