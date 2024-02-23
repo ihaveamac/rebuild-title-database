@@ -12,7 +12,7 @@ from pathlib import Path
 from random import randint
 import sys
 
-from pyctr.crypto import CryptoEngine, Keyslot
+from pyctr.crypto import CryptoEngine, Keyslot, load_seeddb
 from pyctr.type.ncch import NCCHReader, NCCHSection
 from pyctr.type.tmd import TitleMetadataReader
 from pyctr.util import roundup
@@ -23,6 +23,7 @@ TITLE_ALIGN_SIZE = 0x8000
 parser = ArgumentParser(description='Rebuilds 3DS Title Database.')
 parser.add_argument('-b', '--boot9', help='boot9')
 parser.add_argument('-m', '--movable', help='movable.sed', required=True)
+parser.add_argument('-S', '--seeddb', help='SeedDB')
 parser.add_argument('-s', '--sd', help='SD card (containing "Nintendo 3DS")', required=True)
 parser.add_argument('-o', '--output', help='output directory for title info entries', required=True)
 
@@ -30,6 +31,9 @@ args = parser.parse_args()
 
 crypto = CryptoEngine(boot9=args.boot9)
 crypto.setup_sd_key_from_file(args.movable)
+
+if args.seeddb:
+    load_seeddb(args.seeddb)
 
 out = Path(args.output)
 out.mkdir(exist_ok=True)
