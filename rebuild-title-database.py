@@ -58,8 +58,6 @@ for tmd_path in title_dir.rglob('*.tmd'):
     tmd_id = int(tmd_path.name[0:8], 16)
     tmd_path_for_cid = '/' + '/'.join(tmd_path.parts[len(id1.parts):])
 
-    print('Parsing', tmd.title_id)
-
     with tmd_path.open('rb') as tmd_fh:
         with crypto.create_ctr_io(Keyslot.SD, tmd_fh, crypto.sd_path_to_iv(tmd_path_for_cid)) as tmd_cfh:
             try:
@@ -68,6 +66,8 @@ for tmd_path in title_dir.rglob('*.tmd'):
                 print(f'Failed to parse tmd at {tmd_path}')
                 traceback.print_exc()
                 continue
+
+    print('Parsing', tmd.title_id)
 
     if tmd.title_id.startswith('0004008c'):
         # DLC puts contents into different folders, the first content always goes in the first one
